@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Generador de propuestas para arquitectos</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{--ink:#17233B;--ac:#2F54D6;--ac2:#E8EDFC;--mut:#667085;--line:#E3E7EE;--bg:#F3F5F8;--w:#fff}
+*{box-sizing:border-box;margin:0}
+body{font-family:Manrope,system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:14px;line-height:1.5}
+.bar{height:60px;background:var(--w);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 20px;position:sticky;top:0;z-index:5}
+.bar h1{font-size:16px;font-weight:800;margin-right:auto}
+button,select,input,textarea{font:inherit;color:inherit}
+.btn{border:1px solid var(--line);background:var(--w);border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.btn.p{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn.p:hover{background:#2543ad}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.app{display:grid;grid-template-columns:440px 1fr;height:calc(100vh - 60px)}
+.form{overflow:auto;padding:20px;background:var(--w);border-right:1px solid var(--line)}
+.form h2{font-size:15px;font-weight:800;margin:26px 0 12px}
+.form h2:first-child{margin-top:0}
+label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:10px}
+input[type=text],input[type=email],input[type=number],select,textarea{display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--w);font-weight:500;color:var(--ink)}
+textarea{resize:vertical;line-height:1.45}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px}
+.card.off{opacity:.55}
+.row{display:flex;gap:10px;align-items:center}
+.row label{margin:0;flex:1}
+.chk{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--ink);font-size:14px;margin:0}
+.chk input{width:16px;height:16px;accent-color:var(--ac)}
+.x{border:0;background:none;color:var(--mut);cursor:pointer;font-size:18px}
+.warn{font-size:12px;font-weight:600;color:#B54708;margin:-4px 0 8px}
+.pv{overflow:auto;padding:24px 16px}
+#doc{margin:0 auto;width:794px}
+/* ---------- documento ---------- */
+.page{width:794px;min-height:1122px;background:#fff;margin:0 auto 20px;border:1px solid var(--line);position:relative;overflow:hidden;color:var(--ink)}
+.cover{padding:0}
+.cover .top{background:var(--ink);color:#fff;height:620px;padding:56px 60px;position:relative}
+.cover svg{position:absolute;right:0;bottom:0;width:520px;height:520px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:15px;position:relative}
+.mk{width:34px;height:34px;border-radius:8px;background:var(--ac);display:inline-flex;align-items:center;justify-content:center;overflow:hidden;font-weight:800;color:#fff}
+.mk img{width:100%;height:100%;object-fit:contain;background:#fff}
+.cover h1{font-size:50px;line-height:1.05;font-weight:800;margin-top:150px;max-width:460px;position:relative;letter-spacing:-1px}
+.cover .top p{margin-top:18px;font-size:18px;color:#B9C4E4;position:relative;max-width:420px}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:28px 40px;padding:48px 60px}
+.meta small,.k{display:block;font-size:12px;color:var(--mut);font-weight:600}
+.meta b{font-size:17px;font-weight:700}
+.by{position:absolute;left:60px;right:60px;bottom:44px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--mut);display:flex;justify-content:space-between}
+.inner{padding:0 60px 90px}
+.hd{display:flex;align-items:center;gap:10px;padding:34px 60px 16px;font-weight:700;font-size:13px}
+.hd .mk{width:24px;height:24px;border-radius:6px;font-size:12px}
+.hd em{margin-left:auto;font-style:normal;color:var(--mut);font-weight:600}
+.ft{position:absolute;left:60px;right:60px;bottom:30px;display:flex;justify-content:space-between;font-size:11px;color:var(--mut);border-top:1px solid var(--line);padding-top:10px}
+.page h2{font-size:30px;font-weight:800;letter-spacing:-.5px;margin:18px 0 14px}
+.page h3{font-size:16px;font-weight:700;margin-bottom:6px}
+.page p{color:#344054;font-size:13.5px}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+.facts div{background:var(--bg);border-radius:10px;padding:12px 14px}
+.facts b{display:block;font-size:14px;font-weight:700}
+.svcs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.svc{border:1px solid var(--line);border-radius:12px;padding:18px;border-top:4px solid var(--ac)}
+ul.l{list-style:none;padding:0}
+ul.l li{position:relative;padding-left:16px;font-size:13px;color:#344054;margin:5px 0}
+ul.l li:before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:2px;background:var(--ac)}
+.gr{margin:20px 0 26px}
+.gr .r{display:grid;grid-template-columns:170px 1fr 56px;gap:12px;align-items:center;margin:7px 0;font-size:12.5px;font-weight:600}
+.gr .t{height:16px;background:var(--bg);border-radius:4px;position:relative}
+.gr .t i{position:absolute;top:0;bottom:0;background:var(--ac);border-radius:4px}
+.gr .r span:last-child{color:var(--mut);text-align:right}
+.ph{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--line)}
+.ph .n{width:34px;height:34px;border-radius:50%;background:var(--ac2);color:var(--ac);font-weight:800;display:flex;align-items:center;justify-content:center}
+.ph small{color:var(--mut);font-weight:600;font-size:12px}
+table{width:100%;border-collapse:collapse;margin:8px 0 22px;font-size:13px}
+th{text-align:left;font-size:12px;color:var(--mut);font-weight:600;padding:8px 0;border-bottom:2px solid var(--ink)}
+td{padding:10px 0;border-bottom:1px solid var(--line)}
+.r2{text-align:right}
+tr.tot td{font-weight:800;font-size:16px;border-bottom:0;color:var(--ac)}
+.sig{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:70px}
+.sig div{border-top:1px solid var(--ink);padding-top:8px;font-size:12px;color:var(--mut)}
+.sig b{display:block;color:var(--ink);font-size:13px}
+@media(max-width:980px){.app{display:block;height:auto}.form{border-right:0}.pv{padding:16px 8px}}
+@media print{
+ @page{size:A4;margin:0}
+ body{background:#fff}
+ .bar,.form{display:none!important}
+ .app{display:block;height:auto}.pv{padding:0;overflow:visible}
+ #doc{zoom:1!important;margin:0}
+ .page{margin:0;border:0;break-after:page}.page:last-child{break-after:auto}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <h1>Propuestas para arquitectos</h1>
+  <select id="tpl" class="btn" aria-label="Plantilla"></select>
+  <button class="btn" id="del" hidden>Eliminar plantilla</button>
+  <button class="btn" id="save">Guardar como plantilla</button>
+  <button class="btn p" id="dl">Descargar PDF</button>
+</div>
+<div class="app">
+<aside class="form" id="form">
+  <h2>Tu estudio</h2>
+  <label>Nombre del estudio<input type="text" name="arq.estudio"></label>
+  <div class="g2">
+    <label>Arquitecto responsable<input type="text" name="arq.nombre"></label>
+    <label>N.º de colegiatura (CAP)<input type="text" name="arq.cap"></label>
+    <label>Correo<input type="email" name="arq.email"></label>
+    <label>Teléfono<input type="text" name="arq.tel"></label>
+  </div>
+  <div class="g2">
+    <label>Ciudad<input type="text" name="arq.ciudad"></label>
+    <label>Logo (opcional)<input type="file" id="logo" accept="image/*"></label>
+  </div>
+
+  <h2>Cliente y proyecto</h2>
+  <div class="g2">
+    <label>Nombre del cliente<input type="text" name="cli.nombre"></label>
+    <label>N.º de propuesta<input type="text" name="num"></label>
+  </div>
+  <label>Nombre del proyecto<input type="text" name="cli.proyecto"></label>
+  <label>Ubicación<input type="text" name="cli.ubicacion"></label>
+  <div class="g2">
+    <label>Tipo de proyecto
+      <select name="tipo"><option>Vivienda unifamiliar</option><option>Edificio multifamiliar</option><option>Local comercial</option><option>Oficina</option><option>Remodelación</option><option>Otro</option></select></label>
+    <label>Área aproximada (m²)<input type="number" name="area" min="0"></label>
+  </div>
+
+  <h2>Servicios y precios</h2>
+  <div class="g2">
+    <label>Moneda<select name="moneda"><option>S/</option><option>US$</option></select></label>
+    <label>Validez (días)<input type="number" name="validez" min="1"></label>
+  </div>
+  <label class="chk" style="margin-bottom:12px"><input type="checkbox" name="igv"> Sumar IGV (18 %)</label>
+  <div id="svcs"></div>
+
+  <h2>Etapas, entregables y plazos</h2>
+  <div id="phs"></div>
+  <button class="btn" id="addph" type="button">Agregar etapa</button>
+
+  <h2>Condiciones</h2>
+  <label>Una condición por línea<textarea name="cond" rows="7"></textarea></label>
+</aside>
+<main class="pv"><div id="doc"></div></main>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const lines=t=>String(t||'').split('\n').map(s=>s.trim()).filter(Boolean);
+const SV={
+ diseno:['Diseño arquitectónico','Programa de necesidades y análisis del terreno\nAnteproyecto y proyecto de arquitectura\nVisualización 3D del proyecto\nHasta 2 rondas de ajustes por etapa'],
+ remodelacion:['Remodelación','Levantamiento del estado actual\nPropuesta de redistribución y acabados\nPlanos de intervención y detalles\nEspecificación de materiales'],
+ planos:['Planos y expediente técnico','Planos de arquitectura, estructuras e instalaciones\nMemoria descriptiva y cuadro de áreas\nExpediente para licencia de edificación\nArchivos en PDF y CAD'],
+ supervision:['Supervisión de obra','Visitas periódicas y control de calidad\nVerificación del avance según planos\nInformes de supervisión\nRecepción y cierre de obra']};
+const COND='La propuesta no incluye derechos municipales, tasas ni trámites ante terceros.\nCada entrega se libera contra el pago de su etapa.\nSe incluyen hasta 2 rondas de ajustes por etapa; los cambios adicionales se cotizan aparte.\nLos plazos se cuentan desde el primer pago y la entrega de la información del cliente.\nLos planos y diseños son propiedad intelectual del arquitecto hasta la cancelación total.';
+const P=(n,d,p,e)=>({name:n,days:d,pct:p,deliv:e});
+const BASE={
+ vivienda:{l:'Diseño de vivienda',tipo:'Vivienda unifamiliar',on:{diseno:6500,planos:3500},ph:[
+  P('Levantamiento y programa',7,20,'Visita técnica y levantamiento\nPrograma de necesidades'),
+  P('Anteproyecto',15,30,'Plantas, cortes y elevaciones preliminares\nVolumetría 3D'),
+  P('Proyecto',20,30,'Planos de arquitectura definitivos\nCuadro de áreas'),
+  P('Entrega final',8,20,'Planos de detalle\nMemoria descriptiva')]},
+ remodel:{l:'Remodelación',tipo:'Remodelación',on:{remodelacion:5000,planos:1800},ph:[
+  P('Levantamiento',5,25,'Planos del estado actual\nFotografías y mediciones'),
+  P('Propuesta',12,40,'Distribución propuesta\nImágenes 3D y acabados'),
+  P('Planos de intervención',10,35,'Planos de obra\nEspecificaciones de materiales')]},
+ licencia:{l:'Planos y licencia',tipo:'Vivienda unifamiliar',on:{planos:4200},ph:[
+  P('Planos de arquitectura',15,40,'Plantas, cortes y elevaciones'),
+  P('Especialidades',15,40,'Estructuras e instalaciones'),
+  P('Expediente',10,20,'Expediente completo para licencia')]},
+ superv:{l:'Supervisión de obra',tipo:'Vivienda unifamiliar',on:{supervision:6000},ph:[
+  P('Inicio de obra',10,20,'Revisión del cronograma y del presupuesto\nActa de inicio'),
+  P('Supervisión de ejecución',60,60,'Visitas semanales\nInformes mensuales'),
+  P('Cierre y recepción',10,20,'Pliego de observaciones\nActa de recepción')]}};
+const mk=p=>({tipo:p.tipo,cond:COND,moneda:'S/',igv:true,validez:15,
+ services:Object.keys(SV).map(k=>({k,name:SV[k][0],on:k in p.on,price:p.on[k]||0,scope:SV[k][1]})),
+ phases:JSON.parse(JSON.stringify(p.ph))});
+const ls=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}};
+
+let state={num:'PRO-001',area:180,
+ arq:{estudio:'Estudio Quispe Arquitectos',nombre:'Arq. Marisol Quispe',cap:'CAP 12345',email:'contacto@quispearq.pe',tel:'+51 987 654 321',ciudad:'Lima, Perú',logo:''},
+ cli:{nombre:'Familia Rojas Vega',proyecto:'Casa de playa Los Pinos',ubicacion:'Asia, Cañete'},
+ ...mk(BASE.vivienda)};
+const saved=ls('arq_profile'); if(saved) state.arq=saved;
+
+const get=(o,p)=>p.split('.').reduce((a,k)=>a?.[k],o);
+const set=(o,p,v)=>{const k=p.split('.');const l=k.pop();k.reduce((a,x)=>a[x],o)[l]=v};
+
+function fillForm(){
+ document.querySelectorAll('[name]').forEach(el=>{const v=get(state,el.name);el.type==='checkbox'?el.checked=!!v:el.value=v??''});
+ drawLists();
+}
+function drawLists(){
+ $('#svcs').innerHTML=state.services.map((s,i)=>`<div class="card ${s.on?'':'off'}">
+  <div class="row"><label class="chk"><input type="checkbox" data-l="services" data-i="${i}" data-f="on" ${s.on?'checked':''}>${esc(s.name)}</label>
+  <label style="max-width:130px">Precio<input type="number" min="0" data-l="services" data-i="${i}" data-f="price" value="${s.price}"></label></div>
+  <label style="margin:8px 0 0">Alcance (una línea por punto)<textarea rows="3" data-l="services" data-i="${i}" data-f="scope">${esc(s.scope)}</textarea></label></div>`).join('');
+ const tot=state.phases.reduce((t,p)=>t+(+p.pct||0),0);
+ $('#phs').innerHTML=state.phases.map((p,i)=>`<div class="card">
+  <div class="row"><label>Etapa<input type="text" data-l="phases" data-i="${i}" data-f="name" value="${esc(p.name)}"></label>
+  <label style="max-width:70px">Días<input type="number" min="1" data-l="phases" data-i="${i}" data-f="days" value="${p.days}"></label>
+  <label style="max-width:70px">Pago %<input type="number" min="0" max="100" data-l="phases" data-i="${i}" data-f="pct" value="${p.pct}"></label>
+  <button class="x" type="button" data-rm="${i}" aria-label="Quitar etapa">×</button></div>
+  <label style="margin:8px 0 0">Entregables (uno por línea)<textarea rows="3" data-l="phases" data-i="${i}" data-f="deliv">${esc(p.deliv)}</textarea></label></div>`).join('')
+  +(tot!==100?`<p class="warn">Los porcentajes de pago suman ${tot} %. Deben sumar 100 %.</p>`:'');
+}
+
+function doc(){
+ const s=state,a=s.arq,c=s.cli,M=s.moneda,sel=s.services.filter(x=>x.on);
+ const sub=sel.reduce((t,x)=>t+(+x.price||0),0),igv=s.igv?sub*.18:0,tot=sub+igv;
+ const f=n=>M+' '+(+n).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
+ const T=s.phases.reduce((t,p)=>t+(+p.days||0),0)||1;
+ const fecha=new Date().toLocaleDateString('es-PE',{day:'numeric',month:'long',year:'numeric'});
+ const mark=a.logo?`<img src="${a.logo}" alt="">`:`<b>${esc((a.estudio||'A')[0])}</b>`;
+ const hd=`<div class="hd"><span class="mk">${mark}</span><span>${esc(a.estudio)}</span><em>Propuesta ${esc(s.num)}</em></div>`;
+ const ft=`<div class="ft"><span>${esc(a.email)}</span><span>${esc(a.tel)}</span><span>${esc(a.ciudad)}</span></div>`;
+ const nombres=sel.map(x=>x.name.toLowerCase());
+ const lista=nombres.length>1?nombres.slice(0,-1).join(', ')+' y '+nombres.slice(-1):nombres[0]||'arquitectura';
+ let cum=0;
+ const gantt=s.phases.map(p=>{const d=+p.days||0,l=cum/T*100;cum+=d;return `<div class="r"><span>${esc(p.name)}</span><div class="t"><i style="left:${l}%;width:${d/T*100}%"></i></div><span>${d} días</span></div>`}).join('');
+ return `
+<section class="page cover">
+ <div class="top">
+  <svg viewBox="0 0 520 520" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2"><path d="M60 520V120h300v140h160M60 300h200M260 120v180M360 260v260M140 520V420a60 60 0 0 1 60-60"/><rect x="340" y="330" width="120" height="120" fill="#2F54D6" stroke="none"/><path d="M0 60h520M0 180h520M0 400h520" stroke-opacity=".1"/></svg>
+  <div class="brand"><span class="mk">${mark}</span>${esc(a.estudio)}</div>
+  <h1>Propuesta de servicios de arquitectura</h1>
+  <p>${esc(c.proyecto)}</p>
+ </div>
+ <div class="meta">
+  <div><small>Preparada para</small><b>${esc(c.nombre)}</b></div>
+  <div><small>Tipo de proyecto</small><b>${esc(s.tipo)}${s.area?', '+esc(s.area)+' m²':''}</b></div>
+  <div><small>Fecha de emisión</small><b>${fecha}</b></div>
+  <div><small>Propuesta</small><b>${esc(s.num)}</b></div>
+ </div>
+ <div class="by"><span>${esc(a.nombre)}</span><span>${esc(a.cap)}</span></div>
+</section>
+<section class="page">${hd}<div class="inner">
+ <h2>Alcance del servicio</h2>
+ <p>${esc(a.estudio)} presenta a ${esc(c.nombre)} esta propuesta de ${esc(lista)} para el proyecto “${esc(c.proyecto)}”, ubicado en ${esc(c.ubicacion)}.</p>
+ <div class="facts"><div><span class="k">Tipo</span><b>${esc(s.tipo)}</b></div><div><span class="k">Área</span><b>${esc(s.area)} m²</b></div><div><span class="k">Plazo total</span><b>${T} días</b></div><div><span class="k">Validez</span><b>${esc(s.validez)} días</b></div></div>
+ <div class="svcs">${sel.map(x=>`<div class="svc"><h3>${esc(x.name)}</h3><ul class="l">${lines(x.scope).map(l=>`<li>${esc(l)}</li>`).join('')}</ul></div>`).join('')}</div>
+</div>${ft}</section>
+<section class="page">${hd}<div class="inner">
+ <h2>Fases y entregables</h2>
+ <p>El trabajo se desarrolla en ${s.phases.length} etapas durante ${T} días calendario.</p>
+ <div class="gr">${gantt}</div>
+ ${s.phases.map((p,i)=>`<div class="ph"><div class="n">${i+1}</div><div><h3>${esc(p.name)}</h3><small>${esc(p.days)} días</small><ul class="l">${lines(p.deliv).map(l=>`<li>${esc(l)}</li>`).join('')}</ul></div></div>`).join('')}
+</div>${ft}</section>
+<section class="page">${hd}<div class="inner">
+ <h2>Inversión y condiciones</h2>
+ <table><tr><th>Servicio</th><th class="r2">Honorarios</th></tr>
+ ${sel.map(x=>`<tr><td>${esc(x.name)}</td><td class="r2">${f(x.price)}</td></tr>`).join('')}
+ ${s.igv?`<tr><td>Subtotal</td><td class="r2">${f(sub)}</td></tr><tr><td>IGV (18 %)</td><td class="r2">${f(igv)}</td></tr>`:''}
+ <tr class="tot"><td>Total</td><td class="r2">${f(tot)}</td></tr></table>
+ <h3>Cronograma de pagos</h3>
+ <table><tr><th>Etapa</th><th class="r2">Porcentaje</th><th class="r2">Monto</th></tr>
+ ${s.phases.map(p=>`<tr><td>${esc(p.name)}</td><td class="r2">${esc(p.pct)} %</td><td class="r2">${f(tot*(+p.pct||0)/100)}</td></tr>`).join('')}</table>
+ <h3>Condiciones</h3>
+ <ul class="l"><li>Esta propuesta es válida por ${esc(s.validez)} días desde su emisión.</li>${lines(s.cond).map(l=>`<li>${esc(l)}</li>`).join('')}</ul>
+ <div class="sig"><div><b>${esc(a.nombre)}</b>${esc(a.cap)}</div><div><b>${esc(c.nombre)}</b>Conformidad del cliente</div></div>
+</div>${ft}</section>`;
+}
+
+function fit(){const d=$('#doc'),w=$('.pv').clientWidth-24;d.style.zoom=Math.min(1,w/794)}
+function render(){
+ const d=$('#doc');d.style.zoom=1;d.innerHTML=doc();
+ d.querySelectorAll('.page').forEach(p=>{p.style.height='';p.style.height=Math.ceil(p.scrollHeight/1122)*1122+'px'});
+ fit();
+}
+
+/* eventos */
+$('#form').addEventListener('input',e=>{
+ const t=e.target;
+ if(t.name){set(state,t.name,t.type==='checkbox'?t.checked:t.value);if(t.name.startsWith('arq.'))ls('arq_profile',state.arq)}
+ else if(t.dataset.l){const o=state[t.dataset.l][t.dataset.i];o[t.dataset.f]=t.type==='checkbox'?t.checked:t.value;
+  if(t.dataset.f==='on'){t.closest('.card').classList.toggle('off',!t.checked)}
+  if(t.dataset.f==='pct')drawLists()}
+ render();
+});
+$('#form').addEventListener('click',e=>{
+ const r=e.target.dataset.rm;if(r!==undefined){state.phases.splice(+r,1);drawLists();render()}
+});
+$('#addph').onclick=()=>{state.phases.push(P('Nueva etapa',7,0,'Entregable'));drawLists();render()};
+$('#logo').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.arq.logo=r.result;ls('arq_profile',state.arq);render()};r.readAsDataURL(f)};
+
+/* plantillas */
+function tplList(){return ls('arq_tpls')||{}}
+function drawTpl(sel){
+ const u=tplList();
+ $('#tpl').innerHTML='<option value="">Plantilla…</option><optgroup label="Base">'+Object.keys(BASE).map(k=>`<option value="b:${k}">${BASE[k].l}</option>`).join('')+'</optgroup>'
+  +(Object.keys(u).length?'<optgroup label="Mis plantillas">'+Object.keys(u).map(k=>`<option value="u:${esc(k)}">${esc(k)}</option>`).join('')+'</optgroup>':'');
+ $('#tpl').value=sel||'';$('#del').hidden=!(sel||'').startsWith('u:');
+}
+$('#tpl').onchange=e=>{
+ const v=e.target.value;if(!v)return;const [t,k]=[v[0],v.slice(2)];
+ const tp=t==='b'?mk(BASE[k]):JSON.parse(JSON.stringify(tplList()[k]));
+ Object.assign(state,tp);fillForm();render();drawTpl(v);
+};
+$('#save').onclick=()=>{
+ const n=prompt('Nombre de la plantilla');if(!n)return;
+ const u=tplList();const {tipo,cond,moneda,igv,validez,services,phases}=state;
+ u[n]=JSON.parse(JSON.stringify({tipo,cond,moneda,igv,validez,services,phases}));ls('arq_tpls',u);drawTpl('u:'+n);
+};
+$('#del').onclick=()=>{const k=$('#tpl').value.slice(2),u=tplList();if(confirm('¿Eliminar la plantilla “'+k+'”?')){delete u[k];ls('arq_tpls',u);drawTpl('')}};
+
+/* PDF */
+$('#dl').onclick=async()=>{
+ if(!window.html2pdf){window.print();return}
+ const d=$('#doc');d.style.zoom=1;const b=$('#dl');b.textContent='Generando…';
+ const n=(state.cli.nombre||'cliente').replace(/[^\wáéíóúñ]+/gi,'-');
+ try{await html2pdf().set({margin:0,filename:`Propuesta-${n}.pdf`,image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,windowWidth:794},jsPDF:{unit:'mm',format:'a4'},pagebreak:{mode:['legacy']}}).from(d).save()}
+ catch(e){window.print()}
+ b.textContent='Descargar PDF';fit();
+};
+addEventListener('resize',fit);
+fillForm();drawTpl('');render();
+</script>
+</body>
+</html>
