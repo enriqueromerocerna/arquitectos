@@ -82,6 +82,8 @@ tr.tot td{font-weight:800;font-size:16px;border-bottom:0;color:var(--ac)}
 .sig{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:70px}
 .sig div{border-top:1px solid var(--ink);padding-top:8px;font-size:12px;color:var(--mut)}
 .sig b{display:block;color:var(--ink);font-size:13px}
+#pdfroot{position:absolute;left:0;top:0;width:794px;background:#fff;z-index:-1}
+#pdfroot .page{margin:0;border:0}
 @media(max-width:980px){.app{display:block;height:auto}.form{border-right:0}.pv{padding:16px 8px}}
 @media print{
  @page{size:A4;margin:0}
@@ -310,11 +312,14 @@ $('#del').onclick=()=>{const k=$('#tpl').value.slice(2),u=tplList();if(confirm('
 /* PDF */
 $('#dl').onclick=async()=>{
  if(!window.html2pdf){window.print();return}
- const d=$('#doc');d.style.zoom=1;const b=$('#dl');b.textContent='Generando…';
+ const b=$('#dl');b.textContent='Generando…';
+ const r=document.createElement('div');r.id='pdfroot';r.innerHTML=doc();document.body.appendChild(r);
+ r.querySelectorAll('.page').forEach(p=>{p.style.height=Math.ceil(p.scrollHeight/1122)*1122+'px'});
+ scrollTo(0,0);
  const n=(state.cli.nombre||'cliente').replace(/[^\wáéíóúñ]+/gi,'-');
- try{await html2pdf().set({margin:0,filename:`Propuesta-${n}.pdf`,image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,windowWidth:794},jsPDF:{unit:'mm',format:'a4'},pagebreak:{mode:['legacy']}}).from(d).save()}
+ try{await html2pdf().set({margin:0,filename:`Propuesta-${n}.pdf`,image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,scrollX:0,scrollY:0,x:0,y:0,windowWidth:794},jsPDF:{unit:'mm',format:'a4'},pagebreak:{mode:['legacy']}}).from(r).save()}
  catch(e){window.print()}
- b.textContent='Descargar PDF';fit();
+ r.remove();b.textContent='Descargar PDF';
 };
 addEventListener('resize',fit);
 fillForm();drawTpl('');render();
